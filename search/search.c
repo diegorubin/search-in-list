@@ -41,13 +41,12 @@ int entry_lt_value_in_mid(FILE* file, char* entry, long mid) {
     fread(current_entry, ENTRY_SIZE, 1, file);
     current_entry[ENTRY_SIZE] = '\0';
 
-    return atoi(entry) < atoi(current_entry);
+    return atol(entry) < atol(current_entry);
 }
 
-int find_entry(FILE* file, int last, int size, char* entry) {
+int find_entry(FILE* file, long last, long size, char* entry) {
     if (size >= last) {
         long mid = last + (size - last) / 2;
-
         if (entry_is_in_mid(file, entry, mid)) {
             return mid;
         }
