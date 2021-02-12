@@ -5,15 +5,23 @@ use Search;
 sub handler {
   my $r = shift;
 
-  if (!Search::search($r->header_in("X-Entry"))) {
+  try {
+    if (!Search::search($r->header_in("X-Entry"))) {
+      $r->send_http_header("text/html");
+      $r->status(403);
+      $r->rflush;
+      return OK;
+    }
+  
+    $r->internal_redirect("/found");
+    return OK;
+  } catch {
     $r->send_http_header("text/html");
-    $r->status(403);
+    $r->status(500);
     $r->rflush;
     return OK;
   }
 
-  $r->internal_redirect("/found");
-  return OK;
 }
 
 sub found {
