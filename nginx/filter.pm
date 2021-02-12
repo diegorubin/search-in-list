@@ -7,9 +7,7 @@ sub handler {
 
   try {
     if (!Search::search($r->header_in("X-Entry"))) {
-      $r->send_http_header("text/html");
-      $r->status(403);
-      $r->rflush;
+      $r->internal_redirect("/not-found");
       return OK;
     }
   
@@ -28,6 +26,7 @@ sub found {
   my $r = shift;
   $r->send_http_header("text/html");
   $r->status(200);
+  $r->print("Found!");
   $r->rflush;
   return OK;
 }
