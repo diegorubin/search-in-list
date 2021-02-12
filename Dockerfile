@@ -10,6 +10,8 @@ RUN apk add make
 
 RUN cpan install HTTP::Tiny
 
+COPY minio/mc /usr/bin/mc
+
 COPY nginx/nginx.conf /etc/nginx/nginx.conf
 COPY nginx/default.conf /etc/nginx/conf.d/default.conf
 
@@ -19,12 +21,13 @@ COPY nginx/filter.pm /etc/nginx/filters/filter.pm
 # Build and install search
 RUN mkdir /build
 COPY search /build/search
-
 WORKDIR /build/search
-
 RUN ./build.sh
 
-COPY entries_list /tmp/entries_list
+# Copy sync command
+RUN mkdir /application
+COPY minio/sync-entries /application/sync-entries
+COPY start.sh /application/start.sh
 
 EXPOSE 8080
-CMD ["nginx", "-g", "daemon off;"]
+CMD ["/application/start.sh"]

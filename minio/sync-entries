@@ -1,0 +1,24 @@
+#!/bin/sh
+
+update_entries() 
+{
+  echo "syncing file"
+  mc cp $MINIO_BUCKET/$MINIO_BUCKET/entries_list.tar.gz /tmp/entries_list.tar.gz
+  tar -zxvf /tmp/entries_list.tar.gz -C /tmp
+}
+
+mc alias set $MINIO_BUCKET http://$MINIO_ENDPOINT:$MINIO_PORT $ACCESS_KEY $SECRET_KEY
+
+update_entries
+
+while :
+do
+  mkfifo /tmp/minio_events || echo "queue exists!"
+  mc watch $MINIO_BUCKET --events put --suffix ".tar.gz" > /tmp/minio_events &
+  
+  
+  while read event; do
+    echo "$event"
+    update_entries
+  done </tmp/minio_events
+done
