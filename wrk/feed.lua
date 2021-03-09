@@ -15,7 +15,7 @@ total = 8
 counter = 0
 
 request = function()
-  path = "/"
+  path = "/async"
 
   entry = entries[counter % total]
 

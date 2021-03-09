@@ -8,6 +8,7 @@ RUN apk add gcc
 RUN apk add musl-dev
 RUN apk add make
 
+RUN PERL_MM_USE_DEFAULT=1 cpan install AnyEvent::HTTP
 RUN cpan install HTTP::Tiny
 
 COPY minio/mc /usr/bin/mc
